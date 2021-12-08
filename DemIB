@@ -1,0 +1,11 @@
+Microtik
+create subinterface
+/interface vlan add interface="ether1" vlan-id=100 name=VLAN100
+/ip address add interface=VLAN100 address=192.168.100.1/24
+
+OSPF Microtik
+routing ospf area add name=area1 area-id=0.0.0.1
+routing ospf network add network=192.168.1.0/24 area=area1
+
+Create user
+user add name=user group=full password=user
