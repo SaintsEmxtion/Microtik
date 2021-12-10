@@ -1,11 +1,34 @@
 Microtik
-create subinterface
+################# CREATE SUBINTERFACE ######################
 /interface vlan add interface="ether1" vlan-id=100 name=VLAN100
 /ip address add interface=VLAN100 address=192.168.100.1/24
-
+################# OSPF #######################
 OSPF Microtik
 routing ospf area add name=area1 area-id=0.0.0.1
 routing ospf network add network=192.168.1.0/24 area=area1
-
+################# USER ######################
 Create user
 user add name=user group=full password=user
+
+############### IPSEC TUNNEL ######################
+#Mikrotik1
+#Настройка интерфейса ipip
+/interface ipip
+add allow-fast-path=no clamp-tcp-mss=no name=ipip-vpn remote-address=10.20.20.20 ipsec-secret=ipsec-password
+#Установка ip адреса на ipip интерфейс
+/ip address
+add address=10.30.30.1/30 interface=ipip-vpn
+#Статический маршрут до удаленной подсети
+/ip route
+add distance=1 dst-address=192.168.200.0/24 gateway=10.30.30.2
+
+#Mikrotik2
+#Все аналогично, меняются только адреса и подсети
+/interface ipip 
+add allow-fast-path=no clamp-tcp-mss=no name=ipip-vpn remote-address=10.10.10.10 ipsec-secret=ipsec-password
+/ip address
+add address=10.30.30.2/30 interface=ipip-vpn
+/ip route
+add distance=1 dst-address=192.168.100.0/24 gateway=10.30.30.1
+
+
