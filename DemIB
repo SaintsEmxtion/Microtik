@@ -58,3 +58,7 @@ add chain=input protocol=tcp dst-port=22 connection-state=new src-address-list=s
 add chain=input protocol=tcp dst-port=22 connection-state=new src-address-list=ssh_stage3 action=add-src-to-address-list address-list=ssh_blacklist address-list-timeout=10d #Третья ошибочная попытка приводит к копированию IP из списка ssh_stage3 в 
 список ssh_blacklist и все входящие соединения с этого IP будут заблокированы сроком на 10 дней
 
+############## NAT ########################
+mkt@MikroTik] > ip firewall nat add chain=dstnat dst-address=192.168.1.116/32 protocol=tcp dst-port=80 action=dst-nat to-addresses=192.168.0.2 to-ports=80 
+#Все запросы, приходящие на внешний интерфейс маршрутизатора с адресом 116 перенаправляются на адрес 192.168.0.2:80
+
