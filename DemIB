@@ -43,4 +43,18 @@ add interface=bridge1 name=vlan101 vlan-id=101
 /ip address
 add address=192.168.0.1/25 interface=vlan101 network=192.168.0.0
 
+########### SSH FIREWALL ###################
+add chain=input protocol=tcp dst-port=22 src-address-list=ssh_blacklist action=drop #Дропаем все входящие подключения, находящиеся в ssh_blacklist
+
+add chain=input protocol=tcp dst-port=22 connection-state=new action=add-src-to-address-list address-list=ssh_stage1 address-list-timeout=1m #Как только создается новое соединение на порт SSH мы вносим IP-адрес источника в 
+список. При этом задаем удаление через 1 минуту. Это гарантирует нам то, что если соединение прошло успешно — IP-адрес будет удален из списка.
+
+add chain=input protocol=tcp dst-port=22 connection-state=new src-address-list=ssh_stage1 action=add-src-to-address-list address-list=ssh_stage2 address-list-timeout=1m #Если даже пользователь ошибся, то ничего страшного, однако если он попробует в течение 
+этой минуты еще раз подключиться, то его адрес мы закидываем во второй список ssh_stage2 из первого списка ssh_stage1
+
+add chain=input protocol=tcp dst-port=22 connection-state=new src-address-list=ssh_stage2 action=add-src-to-address-list address-list=ssh_stage3 address-list-timeout=1m #Если пользователь ошибется второй раз, то закидываем IP-адрес источника из 
+списка ssh_stage2 в список ssh_stage3
+
+add chain=input protocol=tcp dst-port=22 connection-state=new src-address-list=ssh_stage3 action=add-src-to-address-list address-list=ssh_blacklist address-list-timeout=10d #Третья ошибочная попытка приводит к копированию IP из списка ssh_stage3 в 
+список ssh_blacklist и все входящие соединения с этого IP будут заблокированы сроком на 10 дней
 
