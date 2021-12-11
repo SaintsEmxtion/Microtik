@@ -31,4 +31,16 @@ add address=10.30.30.2/30 interface=ipip-vpn
 /ip route
 add distance=1 dst-address=192.168.100.0/24 gateway=10.30.30.1
 
+############# BRIDGE/VLAN CONFIG #################
+/interface bridge
+add name=bridge1 vlan-filtering=yes
+/interface bridge port
+add bridge=bridge1 interface=ether2 pvid=101
+/interface bridge vlan
+add bridge=bridge1 tagged=bridge1 untagged=ether2 vlan-ids=101
+/interface vlan
+add interface=bridge1 name=vlan101 vlan-id=101
+/ip address
+add address=192.168.0.1/25 interface=vlan101 network=192.168.0.0
+
 
