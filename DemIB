@@ -52,4 +52,10 @@ mkt@MikroTik] > ip firewall nat add chain=dstnat dst-address=192.168.1.116/32 pr
 /routing bgp network add network=connect network
 /routing bgp instance add router-id=172.31.253.2 as=65000 name=bgp65000
 /routing bgp peer add address-families=l2vpn,l2vpn-cisco,vpnv4 instance=bgp65000 name=CE-2 remote-address=172.31.253.2 remote-as=65000 update-source=172.31.253.1
-
+############ SSH CONNECT WITH CERT #############
+root@ubuntu:# ssh-kegen -t rsa -m PEM -f server #генерируем приватный и публичный ключ
+root@ubuntu:# scp server user@192.168.2.1:/ #копипастим приватный ключ на микротик
+root@ubuntu:# scp server.pub user@192.168.2.1:/ #копипастим публичный ключ на микротик
+root@ubuntu:# $ eval "$(ssh-agent -s)" #запускаем ssh-agent
+root@ubuntu:# ssh-add server #Добавляем в ssh-agent приватный ключ
+user ssh-keys private import user=user public-key-file=server.pub private-key-file=server #добваляем сертификаты в микротике
