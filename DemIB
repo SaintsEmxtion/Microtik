@@ -61,4 +61,8 @@ add chain=input protocol=tcp dst-port=22 connection-state=new src-address-list=s
 ############## NAT ########################
 mkt@MikroTik] > ip firewall nat add chain=dstnat dst-address=192.168.1.116/32 protocol=tcp dst-port=80 action=dst-nat to-addresses=192.168.0.2 to-ports=80 
 #Все запросы, приходящие на внешний интерфейс маршрутизатора с адресом 116 перенаправляются на адрес 192.168.0.2:80
+############## BGP ########################
+/routing bgp network add network=connect network
+/routing bgp instance add router-id=172.31.253.2 as=65000 name=bgp65000
+/routing bgp peer add address-families=l2vpn,l2vpn-cisco,vpnv4 instance=bgp65000 name=CE-2 remote-address=172.31.253.2 remote-as=65000 update-source=172.31.253.1
 
