@@ -59,3 +59,9 @@ root@ubuntu:# scp server.pub user@192.168.2.1:/ #копипастим публи
 root@ubuntu:# $ eval "$(ssh-agent -s)" #запускаем ssh-agent
 root@ubuntu:# ssh-add server #Добавляем в ssh-agent приватный ключ
 user ssh-keys private import user=user public-key-file=server.pub private-key-file=server #добваляем сертификаты в микротике
+############ VLAN #######################
+/interface bridge add name=Bridge vlan-filtering=yes
+/interface vlan add interface=Bridge name=Bridge-Vlan12 vlan-id=12
+/interface bridge port add bridge=Bridge interface=ether2 pvid=12
+/interface bridge vlan add bridge=Bridge tagged=Bridge untagged=ether2 vlan-ids=12
+/ip address add address=192.168.12.1/24 interface=Bridge-Vlan12 network=192.168.12.0
