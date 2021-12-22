@@ -99,3 +99,25 @@ add address-pool=dhcp-pool1 disabled=no interface=ether1-LAN1 lease-time=3d name
 
 /ip dhcp-server network
 add address=192.168.15.0/24 dns-server=192.168.15.10 gateway=192.168.15.1 netmask=24 wins-server=192.168.15.10
+########### FDT #######################
+###Режим локального управления###
+configure manager local
+
+###Добавление адресса###
+configure manager ipv4 manual 192.168.0.1 255.255.255.0 192.168.0.2
+configure manager ipv4 dhcp
+
+>expert
+admin@firepower:~$ ip addr add 192.168.0.2/24 dev eth0
+
+
+###Удаление адресса###
+ip addr del 192.168.0.1/24 dev eth0
+
+
+###Поднятие интерфеса###
+ip link set eth0 up
+
+###Добавление шлюза###
+ip route add default via 192.168.0.2
+
